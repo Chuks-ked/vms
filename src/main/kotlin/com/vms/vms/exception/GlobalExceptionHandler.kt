@@ -1,4 +1,3 @@
 package com.vms.vms.exception
 
-class GlobalExceptionHandler {
-}
+class GlobalExceptionHandler(message: String) : RuntimeException(message)

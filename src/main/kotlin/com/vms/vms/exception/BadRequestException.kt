@@ -1,4 +1,3 @@
 package com.vms.vms.exception
 
-class BadRequestException {
-}
+class BadRequestException(message: String) : RuntimeException(message)

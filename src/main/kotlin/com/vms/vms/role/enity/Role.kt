@@ -1,4 +1,4 @@
-package com.vms.vms.entity
+package com.vms.vms.role.enity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -8,16 +8,18 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "test_entities")
-class TestEntity {
+@Table(name = "roles")
+class Role (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null
+    var id: Long? = null,
+
+    @Column(nullable = false, unique = true)
+    var roleName: String,
 
     @Column(nullable = false)
-    var title: String? = null
+    var description: String
 
-    @Column(nullable = false)
-    var content: String? = null
-}
+)
+
