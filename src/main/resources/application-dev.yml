@@ -8,7 +8,6 @@ spring:
 
   # Hibernate Framework Settings
   jpa:
-    open-in-view: false
     hibernate:
       ddl-auto: update # Automatically creates/updates tables locally
     properties:

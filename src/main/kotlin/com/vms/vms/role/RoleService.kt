@@ -13,8 +13,8 @@ class RoleService(
 ) {
 
     fun createRole(
-        request : CreateRoleRequest
-    ) : RoleResponse {
+        request: CreateRoleRequest
+    ): RoleResponse {
         if (roleRepository.existsByRoleName(request.roleName)) {
             throw DuplicateResourceException("Role name already exists")
         }
@@ -47,7 +47,7 @@ class RoleService(
         val role = roleRepository.findById(id)
             .orElseThrow {
                 ResourceNotFoundException(
-                    "Role with id $id not found"
+                    "Role not found"
                 )
             }
 
@@ -59,9 +59,9 @@ class RoleService(
     }
 
     fun updateRole(
-        id : Long,
-        request : UpdateRoleRequest
-    ) : RoleResponse {
+        id: Long,
+        request: UpdateRoleRequest
+    ): RoleResponse {
         val role = roleRepository.findById(id)
             .orElseThrow {
                 ResourceNotFoundException(
