@@ -2,6 +2,7 @@ package com.vms.vms.auth
 
 import com.vms.vms.auth.dto.AuthResponse
 import com.vms.vms.auth.dto.LoginRequest
+import com.vms.vms.auth.dto.MeResponse
 import com.vms.vms.auth.dto.RegisterRequest
 import com.vms.vms.exception.DuplicateResourceException
 import com.vms.vms.exception.ResourceNotFoundException
@@ -10,6 +11,7 @@ import com.vms.vms.security.JwtService
 import com.vms.vms.user.User
 import com.vms.vms.user.UserRepository
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -87,5 +89,26 @@ class AuthService(
             )
 
         return AuthResponse(token)
+    }
+
+    fun me(): MeResponse {
+
+        val email = SecurityContextHolder.getContext().authentication!!.principal as String
+
+//        val email =
+//            SecurityContextHolder
+//                .getContext()
+//                .authentication
+//                .principal as String
+
+        val user = userRepository.findByEmail(email)
+                ?: throw ResourceNotFoundException(
+                    "User not found"
+                )
+
+        return MeResponse(
+            email = user.email,
+            role = user.role.roleName
+        )
     }
 }

@@ -3,6 +3,7 @@ package com.vms.vms.auth
 import com.vms.vms.auth.dto.LoginRequest
 import com.vms.vms.auth.dto.RegisterRequest
 import jakarta.validation.Valid
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,4 +26,7 @@ class AuthController(
         @Valid
         @RequestBody request: LoginRequest
     ) = authService.login(request)
+
+    @GetMapping("/me")
+    fun me() = authService.me()
 }

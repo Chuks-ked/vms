@@ -10,12 +10,10 @@ import javax.crypto.SecretKey
 @Service
 class JwtService(
 
-//    @Value($$"${jwt.secret}")
-    @Value("\${jwt.secret}")
+    @Value($$"${jwt.secret}")
     private val secret: String,
 
     @Value($$"${jwt.expiration}")
-
     private val expiration: Long
 ) {
 
@@ -55,11 +53,38 @@ class JwtService(
             .subject
     }
 
+    fun validateToken(
+        token: String,
+    ): Boolean {
+        return try {
+            extractEmail(token)
+            !isTokenExpired(token)
+        } catch (ex: Exception) {
+            false
+        }
+    }
+
     fun isValid(
         token: String,
         email: String
     ): Boolean {
+        return extractEmail(token) == email && !isTokenExpired(token)
+    }
 
-        return extractEmail(token) == email
+    fun extractExpiration(
+        token: String
+    ): Date {
+        return Jwts.parser()
+            .verifyWith(getSigningKey())
+            .build()
+            .parseSignedClaims(token)
+            .payload
+            .expiration
+    }
+
+    fun isTokenExpired(
+        token: String
+    ): Boolean {
+        return extractExpiration(token).before(Date())
     }
 }
