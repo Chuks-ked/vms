@@ -16,4 +16,27 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .build()
     }
+
+//    @Bean
+//    fun securityFilterChain(
+//        http: HttpSecurity
+//    ): SecurityFilterChain {
+//
+//        http
+//            .csrf { it.disable() }
+//            .authorizeHttpRequests {
+//
+//                it.requestMatchers(
+//                    "/api/v1/auth/**",
+//                    "/swagger-ui/**",
+//                    "/v3/api-docs/**"
+//                ).permitAll()
+//
+//                it.anyRequest()
+//                    .authenticated()
+//            }
+//
+//        return http.build()
+//    }
+
 }
