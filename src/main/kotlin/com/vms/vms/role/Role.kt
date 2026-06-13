@@ -1,4 +1,4 @@
-package com.vms.vms.role.enity
+package com.vms.vms.role
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -22,4 +22,3 @@ class Role (
     var description: String
 
 )
-

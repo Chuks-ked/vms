@@ -1,14 +1,11 @@
-package com.vms.vms.role.service
+package com.vms.vms.role
 
 import com.vms.vms.exception.DuplicateResourceException
 import com.vms.vms.exception.ResourceNotFoundException
 import com.vms.vms.role.dto.CreateRoleRequest
 import com.vms.vms.role.dto.RoleResponse
 import com.vms.vms.role.dto.UpdateRoleRequest
-import com.vms.vms.role.enity.Role
-import com.vms.vms.role.repository.RoleRepository
 import org.springframework.stereotype.Service
-import javax.management.relation.RoleNotFoundException
 
 @Service
 class RoleService(

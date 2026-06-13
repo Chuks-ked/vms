@@ -1,9 +1,8 @@
-package com.vms.vms.role.controller
+package com.vms.vms.role
 
 import com.vms.vms.role.dto.CreateRoleRequest
 import com.vms.vms.role.dto.RoleResponse
 import com.vms.vms.role.dto.UpdateRoleRequest
-import com.vms.vms.role.service.RoleService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
