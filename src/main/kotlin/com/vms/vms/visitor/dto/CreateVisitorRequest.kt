@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
 data class CreateVisitorRequest (
-
     @field:NotBlank
     val fullName: String,
 
