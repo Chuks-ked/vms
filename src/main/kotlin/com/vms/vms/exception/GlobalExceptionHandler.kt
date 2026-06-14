@@ -40,4 +40,18 @@ class GlobalExceptionHandler {
 
         return ResponseEntity(errorPayload, HttpStatus.CONFLICT)
     }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleAccessDenied(
+        ex: AccessDeniedException
+    ): ResponseEntity<Map<String, String>> {
+
+        return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(
+                mapOf(
+                    "message" to ex.message!!
+                )
+            )
+    }
 }

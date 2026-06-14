@@ -95,11 +95,7 @@ class AuthService(
 
         val email = SecurityContextHolder.getContext().authentication!!.principal as String
 
-//        val email =
-//            SecurityContextHolder
-//                .getContext()
-//                .authentication
-//                .principal as String
+//        val email = SecurityContextHolder.getContext().authentication.principal as String
 
         val user = userRepository.findByEmail(email)
                 ?: throw ResourceNotFoundException(

@@ -1,18 +1,22 @@
 package com.vms.vms.visit
 
+import com.vms.vms.exception.AccessDeniedException
 import com.vms.vms.exception.InvalidVisitStatusException
 import com.vms.vms.exception.ResourceNotFoundException
+import com.vms.vms.security.CurrentUser
 import com.vms.vms.user.UserRepository
 import com.vms.vms.visit.dto.CreateVisitRequest
 import com.vms.vms.visit.dto.VisitResponse
 import com.vms.vms.visitor.VisitorRepository
 import org.springframework.stereotype.Service
 
+
 @Service
 class VisitService(
     private val visitRepository: VisitRepository,
     private val visitorRepository: VisitorRepository,
     private val userRepository: UserRepository,
+    private val currentUser: CurrentUser
 ) {
 
     fun createVisit(
@@ -49,6 +53,8 @@ class VisitService(
     }
 
     fun approveVisit(id: Long): VisitResponse {
+        requireRole("ADMIN", "HOST")
+
         val visit = getVisitEntity(id)
         if(visit.status != VisitStatus.PENDING){
             throw InvalidVisitStatusException("Only pending visit can be approved")
@@ -61,6 +67,8 @@ class VisitService(
     }
 
     fun rejectVisit(id: Long): VisitResponse {
+        requireRole("ADMIN", "HOST")
+
         val visit = getVisitEntity(id)
         if(visit.status != VisitStatus.PENDING){
             throw InvalidVisitStatusException("Only pending visit can be rejected")
@@ -73,6 +81,8 @@ class VisitService(
     }
 
     fun cancelVisit(id: Long): VisitResponse {
+        requireRole("ADMIN", "RECEPTIONIST")
+
         val visit = getVisitEntity(id)
         if(
             visit.status != VisitStatus.PENDING &&
@@ -88,6 +98,8 @@ class VisitService(
     }
 
     fun checkInVisit(id: Long): VisitResponse {
+        requireRole("ADMIN")
+
         val visit = getVisitEntity(id)
         if (visit.status != VisitStatus.APPROVED){
             throw InvalidVisitStatusException("Only approved visit can be checked-in")
@@ -100,6 +112,8 @@ class VisitService(
     }
 
     fun checkOutVisit(id: Long): VisitResponse {
+        requireRole("ADMIN", "RECEPTIONIST")
+
         val visit = getVisitEntity(id)
         if (visit.status != VisitStatus.CHECKED_IN){
             throw InvalidVisitStatusException("Only checked-in visit can be checked-out")
@@ -124,5 +138,15 @@ class VisitService(
     private fun getVisitEntity(id: Long): Visit {
         return visitRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Visit not found") }
+    }
+
+    private fun requireRole(
+        vararg roles: String
+    ) {
+        val user = currentUser.getUser()
+
+        if(user.role.roleName !in roles){
+            throw AccessDeniedException("Access Denied")
+        }
     }
 }
