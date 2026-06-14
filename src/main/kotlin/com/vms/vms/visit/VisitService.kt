@@ -1,9 +1,9 @@
 package com.vms.vms.visit
 
+import com.vms.vms.exception.InvalidVisitStatusException
 import com.vms.vms.exception.ResourceNotFoundException
 import com.vms.vms.user.UserRepository
 import com.vms.vms.visit.dto.CreateVisitRequest
-import com.vms.vms.visit.dto.UpdateVisitStatusRequest
 import com.vms.vms.visit.dto.VisitResponse
 import com.vms.vms.visitor.VisitorRepository
 import org.springframework.stereotype.Service
@@ -48,18 +48,67 @@ class VisitService(
         return visit.toResponse()
     }
 
-    fun updateVisit(
-        id: Long,
-        request: UpdateVisitStatusRequest
-    ): VisitResponse {
-        val visit = visitRepository.findById(id)
-            .orElseThrow { ResourceNotFoundException("Visit not found") }
+    fun approveVisit(id: Long): VisitResponse {
+        val visit = getVisitEntity(id)
+        if(visit.status != VisitStatus.PENDING){
+            throw InvalidVisitStatusException("Only pending visit can be approved")
+        }
 
-        visit.status = request.status
+        visit.status = VisitStatus.APPROVED
 
-        val updatedVisit = visitRepository.save(visit)
+        return visitRepository
+            .save(visit).toResponse()
+    }
 
-        return updatedVisit.toResponse()
+    fun rejectVisit(id: Long): VisitResponse {
+        val visit = getVisitEntity(id)
+        if(visit.status != VisitStatus.PENDING){
+            throw InvalidVisitStatusException("Only pending visit can be rejected")
+        }
+
+        visit.status = VisitStatus.REJECTED
+
+        return visitRepository
+            .save(visit).toResponse()
+    }
+
+    fun cancelVisit(id: Long): VisitResponse {
+        val visit = getVisitEntity(id)
+        if(
+            visit.status != VisitStatus.PENDING &&
+            visit.status != VisitStatus.APPROVED
+        ){
+            throw InvalidVisitStatusException("Only pending or approved visit can be cancelled")
+        }
+
+        visit.status = VisitStatus.CANCELLED
+
+        return visitRepository
+            .save(visit).toResponse()
+    }
+
+    fun checkInVisit(id: Long): VisitResponse {
+        val visit = getVisitEntity(id)
+        if (visit.status != VisitStatus.APPROVED){
+            throw InvalidVisitStatusException("Only approved visit can be checked-in")
+        }
+
+        visit.status = VisitStatus.CHECKED_IN
+
+        return visitRepository
+            .save(visit).toResponse()
+    }
+
+    fun checkOutVisit(id: Long): VisitResponse {
+        val visit = getVisitEntity(id)
+        if (visit.status != VisitStatus.CHECKED_IN){
+            throw InvalidVisitStatusException("Only checked-in visit can be checked-out")
+        }
+
+        visit.status = VisitStatus.CHECKED_OUT
+
+        return visitRepository
+            .save(visit).toResponse()
     }
 
     private fun Visit.toResponse() =
@@ -71,4 +120,9 @@ class VisitService(
             visitDate = visitDate,
             status = status
         )
+
+    private fun getVisitEntity(id: Long): Visit {
+        return visitRepository.findById(id)
+            .orElseThrow { ResourceNotFoundException("Visit not found") }
+    }
 }
