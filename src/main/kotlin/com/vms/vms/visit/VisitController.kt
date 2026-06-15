@@ -1,5 +1,6 @@
 package com.vms.vms.visit
 
+import com.vms.vms.audit.AuditService
 import com.vms.vms.visit.dto.CreateVisitRequest
 import com.vms.vms.visit.dto.VisitResponse
 import jakarta.validation.Valid
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/visits")
 class VisitController(
-    private val visitService: VisitService
+    private val visitService: VisitService,
+    private val auditService: AuditService
 ) {
 
     @PostMapping
@@ -57,4 +59,8 @@ class VisitController(
         @PathVariable id: Long,
     ) = visitService.checkOutVisit(id)
 
+    @GetMapping("/{id}/history")
+    fun getVisitHistory(
+        @PathVariable id: Long,
+    ) = auditService.getVisitHistory(id)
 }

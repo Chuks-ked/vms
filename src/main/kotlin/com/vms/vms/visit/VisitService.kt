@@ -1,5 +1,6 @@
 package com.vms.vms.visit
 
+import com.vms.vms.audit.AuditService
 import com.vms.vms.exception.AccessDeniedException
 import com.vms.vms.exception.InvalidVisitStatusException
 import com.vms.vms.exception.ResourceNotFoundException
@@ -16,7 +17,8 @@ class VisitService(
     private val visitRepository: VisitRepository,
     private val visitorRepository: VisitorRepository,
     private val userRepository: UserRepository,
-    private val currentUser: CurrentUser
+    private val currentUser: CurrentUser,
+    private val auditService: AuditService
 ) {
 
     fun createVisit(
@@ -62,6 +64,13 @@ class VisitService(
 
         visit.status = VisitStatus.APPROVED
 
+        auditService.log(
+            user = currentUser.getUser(),
+            action = "APPROVED_VISIT",
+            entityType = "VISIT",
+            entityId = visit.id!!
+        )
+
         return visitRepository
             .save(visit).toResponse()
     }
@@ -75,6 +84,13 @@ class VisitService(
         }
 
         visit.status = VisitStatus.REJECTED
+
+        auditService.log(
+            user = currentUser.getUser(),
+            action = "REJECTED_VISIT",
+            entityType = "VISIT",
+            entityId = visit.id!!
+        )
 
         return visitRepository
             .save(visit).toResponse()
@@ -93,6 +109,13 @@ class VisitService(
 
         visit.status = VisitStatus.CANCELLED
 
+        auditService.log(
+            user = currentUser.getUser(),
+            action = "CANCELLED_VISIT",
+            entityType = "VISIT",
+            entityId = visit.id!!
+        )
+
         return visitRepository
             .save(visit).toResponse()
     }
@@ -107,6 +130,13 @@ class VisitService(
 
         visit.status = VisitStatus.CHECKED_IN
 
+        auditService.log(
+            user = currentUser.getUser(),
+            action = "CHECKED_IN_VISIT",
+            entityType = "VISIT",
+            entityId = visit.id!!
+        )
+
         return visitRepository
             .save(visit).toResponse()
     }
@@ -120,6 +150,13 @@ class VisitService(
         }
 
         visit.status = VisitStatus.CHECKED_OUT
+
+        auditService.log(
+            user = currentUser.getUser(),
+            action = "CHECKED_OUT_VISIT",
+            entityType = "VISIT",
+            entityId = visit.id!!
+        )
 
         return visitRepository
             .save(visit).toResponse()
