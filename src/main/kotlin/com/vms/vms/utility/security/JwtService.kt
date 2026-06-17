@@ -64,13 +64,6 @@ class JwtService(
         }
     }
 
-    fun isValid(
-        token: String,
-        email: String
-    ): Boolean {
-        return extractEmail(token) == email && !isTokenExpired(token)
-    }
-
     fun extractExpiration(
         token: String
     ): Date {

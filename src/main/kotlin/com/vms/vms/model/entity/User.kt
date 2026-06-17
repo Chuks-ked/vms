@@ -1,5 +1,6 @@
 package com.vms.vms.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -25,6 +26,7 @@ class User(
     @Column(nullable = false, unique = true)
     var email: String,
 
+    @JsonIgnore
     @Column(nullable = false)
     var passwordHash: String,
 
@@ -34,7 +36,7 @@ class User(
     @Column(nullable = false)
     var department: String? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     var role: Role,
 

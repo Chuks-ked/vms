@@ -1,6 +1,5 @@
 package com.vms.vms.service
 
-import com.vms.vms.utility.exception.AccessDeniedException
 import com.vms.vms.utility.exception.InvalidVisitStatusException
 import com.vms.vms.utility.exception.ResourceNotFoundException
 import com.vms.vms.model.entity.Visit
@@ -11,6 +10,7 @@ import com.vms.vms.repository.VisitRepository
 import com.vms.vms.utility.security.CurrentUser
 import com.vms.vms.utility.VisitStatus
 import com.vms.vms.repository.VisitorRepository
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 
 @Service
@@ -55,8 +55,8 @@ class VisitService(
         return visit.toResponse()
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'HOST')")
     fun approveVisit(id: Long): VisitResponse {
-        requireRole("ADMIN", "HOST")
 
         val visit = getVisitEntity(id)
         if(visit.status != VisitStatus.PENDING){
@@ -76,8 +76,8 @@ class VisitService(
             .save(visit).toResponse()
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'HOST')")
     fun rejectVisit(id: Long): VisitResponse {
-        requireRole("ADMIN", "HOST")
 
         val visit = getVisitEntity(id)
         if(visit.status != VisitStatus.PENDING){
@@ -97,8 +97,8 @@ class VisitService(
             .save(visit).toResponse()
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     fun cancelVisit(id: Long): VisitResponse {
-        requireRole("ADMIN", "RECEPTIONIST")
 
         val visit = getVisitEntity(id)
         if(
@@ -121,8 +121,8 @@ class VisitService(
             .save(visit).toResponse()
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     fun checkInVisit(id: Long): VisitResponse {
-        requireRole("ADMIN")
 
         val visit = getVisitEntity(id)
         if (visit.status != VisitStatus.APPROVED){
@@ -142,8 +142,8 @@ class VisitService(
             .save(visit).toResponse()
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
     fun checkOutVisit(id: Long): VisitResponse {
-        requireRole("ADMIN", "RECEPTIONIST")
 
         val visit = getVisitEntity(id)
         if (visit.status != VisitStatus.CHECKED_IN){
@@ -176,15 +176,5 @@ class VisitService(
     private fun getVisitEntity(id: Long): Visit {
         return visitRepository.findById(id)
             .orElseThrow { ResourceNotFoundException("Visit not found") }
-    }
-
-    private fun requireRole(
-        vararg roles: String
-    ) {
-        val user = currentUser.getUser()
-
-        if(user.role.roleName !in roles){
-            throw AccessDeniedException("Access Denied")
-        }
     }
 }

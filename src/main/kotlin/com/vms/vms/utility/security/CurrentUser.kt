@@ -1,21 +1,16 @@
 package com.vms.vms.utility.security
 
-import com.vms.vms.utility.exception.ResourceNotFoundException
 import com.vms.vms.model.entity.User
-import com.vms.vms.repository.UserRepository
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 
 @Component
-class CurrentUser(
-    private val userRepository: UserRepository
-) {
+class CurrentUser {
 
     fun getUser(): User {
 
-        val email = SecurityContextHolder.getContext().authentication!!.principal as String
+        val principal = SecurityContextHolder.getContext().authentication!!.principal as CustomUserDetails
 
-        return userRepository.findByEmail(email)
-            ?: throw ResourceNotFoundException("Authenticated user not found")
+        return principal.getUser()
     }
 }
