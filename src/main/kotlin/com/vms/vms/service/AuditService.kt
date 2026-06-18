@@ -1,6 +1,6 @@
 package com.vms.vms.service
 
-import com.vms.vms.utility.AuditLog
+import com.vms.vms.model.entity.AuditLog
 import com.vms.vms.model.response.AuditResponse
 import com.vms.vms.repository.AuditLogRepository
 import com.vms.vms.model.entity.User

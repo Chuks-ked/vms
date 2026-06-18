@@ -1,6 +1,5 @@
-package com.vms.vms.utility
+package com.vms.vms.model.entity
 
-import com.vms.vms.model.entity.User
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
